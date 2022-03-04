@@ -1,5 +1,6 @@
 package com.asakao.weather.ui.weather
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -23,6 +24,7 @@ class WeatherActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityWeatherBinding
 
+//    @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val decorView = window.decorView
@@ -49,8 +51,19 @@ class WeatherActivity : AppCompatActivity() {
                 Toast.makeText(this, "cannot get the forecast successfully", Toast.LENGTH_SHORT).show()
                 result.exceptionOrNull()?.printStackTrace()
             }
+            binding.swipeRefresh.isRefreshing = false
         })
+        binding.swipeRefresh.setColorSchemeColors(R.color.colorPrimary)
+        refreshWeather()
+        binding.swipeRefresh.setOnRefreshListener {
+            refreshWeather()
+        }
+
+    }
+
+    private fun refreshWeather(){
         viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
+        binding.swipeRefresh.isRefreshing = true
     }
 
     private fun showWeatherInfo(weather: Weather){
